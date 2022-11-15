@@ -8,6 +8,56 @@ const connection = mysql.createConnection({
     database: 'sakila'
 });
 
+const searchActors = async () => {
+
+    const answer = await inquirer.prompt([
+        {
+            type: "input",
+            name: "last_name",
+            message: "Last Name: "
+        }
+    ])
+
+    try {
+        const [results] = await connection.promise().query(
+            'SELECT * FROM actor WHERE last_name = ?',
+            answer.last_name
+        )
+
+        console.table(results)
+        menuPrompt()
+
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+const addActor = async () => {
+    const answers = await inquirer.prompt([
+        {
+            type: 'input',
+            name: 'first_name',
+            message: "What is their first name?"
+        }, {
+            type: 'input',
+            name: 'last_name',
+            message: "What is their last name?"
+        }
+    ])
+
+    try{
+        const [results] = await connection.promise().query(
+            'INSERT INTO actor (first_name, last_name) VALUES (?, ?)',
+            [answers.first_name, answers.last_name]
+        )
+        console.log(results)
+    } catch(error){
+        throw new Error(error)
+    }
+
+    
+}
+
 const menuPrompt = async () => {
     const answers = await inquirer.prompt([
         {
@@ -17,17 +67,20 @@ const menuPrompt = async () => {
             choices: ['SEARCH actors', 'ADD an actor', 'UPDATE an actor', 'EXIT']
         }
     ])
-    console.log(answers)
-    if (answers.action === 'SEARCH actors'){
+
+    if
+        (answers.action === 'SEARCH actors') {
         searchActors()
-    } 
-    else if (answers.action === 'ADD an actor'){
+    }
+    else if
+        (answers.action === 'ADD an actor') {
         addActor()
-    } 
-    else if (answers.action === 'UPDATE an actor'){
+    }
+    else if
+        (answers.action === 'UPDATE an actor') {
         updateActor()
     }
-     else {
+    else {
         process.exit(0)
     }
 }
